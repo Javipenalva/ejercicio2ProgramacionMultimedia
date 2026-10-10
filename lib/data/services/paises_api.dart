@@ -57,9 +57,46 @@ class PaisesApi {
   }
 
   Future<List<dynamic>> getPaises(String continente) async {
-    // TO-DO
+   
+   String url = "$urlBase/paises/$continente";
+
+    try {
+      // Devuelve la lista de continentes de forma genérica, a partir de la URL
+      http.Response data = await http.get(Uri.parse(url));
+
+      if (data.statusCode == 404) {
+        print("\n\x1B[31mError 404: No se encuentra el recurso $url");
+      } else if (data.statusCode == 500) {
+        print("n\x1B[31mError 500: Error del servidor");
+      } else if (data.statusCode == HttpStatus.ok) {
+        // También podemos utilizar el código 200
+        String body = utf8.decode(data.bodyBytes);
+        final bodyJSON = jsonDecode(body);
+        return bodyJSON as List; // Devolvemos simplemente los registros como una lista
+      } else {
+        // Se produce algún otro error
+        print(
+          "n\x1B[31mEl servidor ha respondido, pero se ha producido un código de error ${data.statusCode}",
+        );
+      }
+      return [];
+    } on SocketException {
+      // Excepción SocketException
+      print(
+        "\n\x1B[31mNo se pude conectar con el servidor $url. Comprueba el estado de la red, los DNS o la connexión al servidor a través de un navegador",
+      );
+      return [];
+    } on FormatException {
+      // Excepción decodificando la respuesta
+      print("El formato esperado es incorrecto (Excepción FormatException)");
+      return [];
+    } catch (e) {
+      // Error genérico
+      print("Se ha producido el error: $e");
+
     return []; // a modificar
   }
+   }
 
   Future<dynamic> infoPais(String pais) async {
     // TO-DO
