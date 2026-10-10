@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:paisescli/data/repositories/paises_repository.dart';
 import 'package:paisescli/domain/entities/continente.dart';
+import 'package:paisescli/domain/entities/pais.dart';
 
 void main(List<String> argumentos) {
 
@@ -84,16 +85,32 @@ void muestraContinentesSync(PaisesRepository repo) async {
     print("\x1B[31mNo se ha obtenido respuesta\x1B[0m");
   }
 }
-
 void muestraPaises(PaisesRepository repo, String continente) {
-  // TO-DO
+  Future<List<Pais>> respuestaFuture = repo.getPaises(continente);
 
-  // Obtener la lista de paises de un continente
-  // y mostrarla por pantalla
-  
-  print("\x1B[35m Función pendiente de implementación \x1B[0m");
-
+  respuestaFuture.then((respuesta) {
+    if (respuesta.isNotEmpty) {
+      for (var pais in respuesta) {
+        print(pais.toString());
+      }
+    } else {
+      print("\x1B[31mNo se ha obtenido respuesta\x1B[0m");
+    }
+  });
 }
+void muestraPaisesSync(PaisesRepository repo, String continente) async {
+  List<Pais> paises = await repo.getPaises(continente);
+
+  if (paises.isNotEmpty) {
+    for (var pais in paises) {
+      print(pais.toString());
+    }
+  } else {
+    print("\x1B[31mNo se ha obtenido respuesta\x1B[0m");
+  }
+}
+
+
 
 void muestraInfoPais(PaisesRepository repo, String pais) {
   // TO-DO
