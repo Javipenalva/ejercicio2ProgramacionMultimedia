@@ -113,9 +113,15 @@ void muestraPaisesSync(PaisesRepository repo, String continente) async {
 
 
 void muestraInfoPais(PaisesRepository repo, String pais) {
-  // TO-DO
+ Future<Pais> respuestaFuture = repo.infoPais(pais);
 
-  print("\x1B[35m Función pendiente de implementación \x1B[0m");
+  respuestaFuture.then((respuesta) {
+    if (respuesta.capital != null) {
+      print(respuesta.toString());
+    } else {
+      print("\x1B[31mNo se ha obtenido respuesta\x1B[0m");
+    }
+  });
 }
 
 

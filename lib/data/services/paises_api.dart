@@ -31,7 +31,8 @@ class PaisesApi {
         // También podemos utilizar el código 200
         String body = utf8.decode(data.bodyBytes);
         final bodyJSON = jsonDecode(body);
-        return bodyJSON as List; // Devolvemos simplemente los registros como una lista
+        return bodyJSON
+            as List; // Devolvemos simplemente los registros como una lista
       } else {
         // Se produce algún otro error
         print(
@@ -57,8 +58,7 @@ class PaisesApi {
   }
 
   Future<List<dynamic>> getPaises(String continente) async {
-   
-   String url = "$urlBase/paises/$continente";
+    String url = "$urlBase/paises/$continente";
 
     try {
       // Devuelve la lista de continentes de forma genérica, a partir de la URL
@@ -72,7 +72,8 @@ class PaisesApi {
         // También podemos utilizar el código 200
         String body = utf8.decode(data.bodyBytes);
         final bodyJSON = jsonDecode(body);
-        return bodyJSON as List; // Devolvemos simplemente los registros como una lista
+        return bodyJSON
+            as List; // Devolvemos simplemente los registros como una lista
       } else {
         // Se produce algún otro error
         print(
@@ -94,13 +95,38 @@ class PaisesApi {
       // Error genérico
       print("Se ha producido el error: $e");
 
-    return []; // a modificar
+      return []; // a modificar
+    }
   }
-   }
 
   Future<dynamic> infoPais(String pais) async {
-    // TO-DO
-    return null; // a modificar
-  }
+    // DONE
+    String url = "$urlBase/infopais/$pais";
 
+    try {
+      http.Response data = await http.get(Uri.parse(url));
+
+      if (data.statusCode == 404) {
+        print("\n\x1B[31mError 404: No se encuentra el recurso $url\x1B[0m");
+      } else if (data.statusCode == 500) {
+        print("\n\x1B[31mError 500: Error del servidor\x1B[0m");
+      } else if (data.statusCode == HttpStatus.ok) {
+        String body = utf8.decode(data.bodyBytes);
+        final bodyJSON = jsonDecode(body);
+        return bodyJSON; // sin "as List": es un solo objeto
+      } else {
+        print("\n\x1B[31mCódigo de error ${data.statusCode}\x1B[0m");
+      }
+      return null;
+    } on SocketException {
+      print("\n\x1B[31mNo se puede conectar con el servidor $url\x1B[0m");
+      return null;
+    } on FormatException {
+      print("El formato esperado es incorrecto (Excepción FormatException)");
+      return null;
+    } catch (e) {
+      print("Se ha producido el error: $e");
+      return null;
+    }
+  }
 }

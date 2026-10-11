@@ -62,7 +62,15 @@ class PaisesRepository {
     return listaPaises;
   }
 
-  // TO-DO:
+
   // Implementar el método infoPais
-  // Pais infoPais(String pais)
+Future<Pais> infoPais(String pais) async {
+  dynamic paisJSON = await api.infoPais(pais);
+
+  if (paisJSON == null) {
+    return Pais(nombre: pais);
+  }
+
+  return Pais.fromJSON(paisJSON);
+}
 }
